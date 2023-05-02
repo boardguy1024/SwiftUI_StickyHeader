@@ -96,6 +96,8 @@ struct Home: View {
                         .fill(.black)
                         .opacity(0.15)
                 }
+                // progress加減でTextFieldを表示 ~ 非表示させる
+                .opacity(1 + progress)
 
                 Button {
 
@@ -127,6 +129,8 @@ struct Home: View {
                 CustomButton(symbolImage: "qrcode.viewfinder", title: "Scanning") {
                 }
             }
+            // アイコンが上に移動するとともに、アイコンの間いのマージンを 0から 最大 -50 縮める
+            .padding(.horizontal, -progress * 50)
             .padding(.top, 10)
             // MARK: Moving up when Scrolling Started
             // アイコンを 最大 65 offsetする
@@ -139,6 +143,7 @@ struct Home: View {
         .background(
             Rectangle()
                 .fill(Color.red.gradient)
+                .padding(.bottom, -progress * 85)
         )
     }
 
