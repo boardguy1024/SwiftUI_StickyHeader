@@ -43,7 +43,8 @@ struct Home: View {
     }
 
     // 三項演算子がわかりにくいのでこれでわかりやすくする
-    func scrollProgress(with offsetY: CGFloat) -> CGFloat {
+    // thresholdHightはアイコンを最大80で固定するための値
+    func scrollProgress(with offsetY: CGFloat, thresholdHight: CGFloat = 80) -> CGFloat {
         //let progress = -(offsetY / 80) > 1 ? -1 : (offsetY < 0 ? 0 : (offsetY / 80))
 
         print("        offsetY : \(offsetY)")
@@ -52,7 +53,7 @@ struct Home: View {
         // 80: scroll閾値
         // 上にscrollしたoffsetが 80を超えたら -1を返す (上にscroll中は -1をずっと返す :: アイコンを -1 * 65 位置させるため)
         // 80を超えた領域内でスクロール中では、アイコンを -1 * 65 位置に固定させるため
-        if -(offsetY / 80) > 1 {
+        if -(offsetY / thresholdHight) > 1 {
             return -1
         } else {
 
@@ -61,15 +62,13 @@ struct Home: View {
                 return 0
             } else {
                 // 80まではスクロールと同時にアイコンを上に動かす (scrollOffset分ではなく、スクロールした (offset * 0.81)
-                return offsetY / 80
+                return offsetY / thresholdHight
             }
         }
     }
 
     @ViewBuilder
     func HeaderView(_ safeAreaTop: CGFloat) -> some View {
-
-
 
         // scrollした offsetYが 80を超えた場合、 -1
         //　scrollした offsetYが 80を超えていない場合、
@@ -150,6 +149,9 @@ struct Home: View {
     @ViewBuilder
     func CustomButton(symbolImage: String, title: String, onClick: @escaping () -> Void) -> some View {
 
+        // 80ではなく、40にすることで スクロール半分で progressを 0 ~ 1に計算
+        let progress = scrollProgress(with: offsetY, thresholdHight: 40)
+
         Button {
 
         } label: {
@@ -169,6 +171,19 @@ struct Home: View {
                     .foregroundColor(.white)
             }
             .frame(maxWidth: .infinity)
+            // ヘッダー固定の場合、非表示
+            .opacity(1 + progress)
+            .overlay {
+
+                // スクロールによって、元のアイコンを表示・非表示の反対に行われる
+                // ヘッダー固定した場合、このアイコンだけが表示
+                Image(systemName: symbolImage)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .offset(y: -10)
+                    .opacity(-progress)
+            }
         }
 
 
