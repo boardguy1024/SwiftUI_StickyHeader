@@ -136,6 +136,20 @@ struct Home: View {
             .offset(y: progress * 65)
 
         }
+        // TextFieldが非表示の代わりに表示させるもの
+        .overlay(alignment: .topLeading) {
+            Button {
+
+            } label: {
+                Image(systemName: "magnifyingglass")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+            }
+            .offset(x: 13, y: 10)
+            .opacity(-progress)
+
+        }
         .environment(\.colorScheme, .dark)
         .padding(.top, safeAreaTop + 10)
         .padding([.horizontal, .bottom], 15)
@@ -144,6 +158,7 @@ struct Home: View {
                 .fill(Color.red.gradient)
                 .padding(.bottom, -progress * 85)
         )
+
     }
 
     @ViewBuilder
@@ -185,8 +200,6 @@ struct Home: View {
                     .opacity(-progress)
             }
         }
-
-
     }
 }
 
@@ -211,7 +224,7 @@ extension View {
                 GeometryReader { proxy in
                     let minY = proxy.frame(in: coordinateSpace).minY
 
-                    Color.green.opacity(0.3)
+                    Color.clear
                         .preference(key: OffsetKey.self, value: minY)
                         .onPreferenceChange(OffsetKey.self) { value in
                             completion(value)
